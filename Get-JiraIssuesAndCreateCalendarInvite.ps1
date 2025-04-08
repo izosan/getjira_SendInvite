@@ -200,6 +200,9 @@ $escapedHtml = $htmlContent -replace "\r\n", "\n" -replace "\n", "\\n" -replace 
 # Create a plain text description as fallback
 $plainTextDesc = "ACE Deployment live chat for $ReleaseVersion"
 
+# Set timezone for the release date
+$timezone = "Central European Standard Time"
+
 # Set up iCalendar parameters - use release date with fixed times (10 AM to 4 PM)
 if ($releaseDate) {
     $startTime = $releaseDate.Date.AddHours(10) # 10:00 AM
@@ -209,6 +212,15 @@ if ($releaseDate) {
     $startTime = $today.Date.AddHours(10)
     $endTime = $today.Date.AddHours(16)
 }
+
+# Add optional attendees to the calendar invite
+$attendees = $script:defaultOptionalAttendees
+$attendeeLines = @()
+foreach ($attendee in $attendees) {
+    $attendeeLines += "ATTENDEE;CN=$($attendee.Name);ROLE=OPT-PARTICIPANT;RSVP=TRUE:mailto:$($attendee.Email)"
+}
+$attendeeString = $attendeeLines -join "`r`n"
+
 $startTimeStr = $startTime.ToString("yyyyMMddTHHmmss")
 $endTimeStr = $endTime.ToString("yyyyMMddTHHmmss")
 $now = (Get-Date).ToString("yyyyMMddTHHmmss")
@@ -224,8 +236,9 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:$uid
 DTSTAMP:$now
-DTSTART:$startTimeStr
-DTEND:$endTimeStr
+DTSTART;TZID=$timezone\:$startTimeStr
+DTEND;TZID=$timezone\:$endTimeStr
+$attendeeString
 SUMMARY:ACE Deployment live chat for $ReleaseVersion
 LOCATION:Virtual Meeting
 DESCRIPTION:$plainTextDesc
