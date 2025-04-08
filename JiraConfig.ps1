@@ -8,3 +8,19 @@ $script:jqlQueryTemplate = 'project in (Project1, Project2, Project3, Project4) 
 
 # Custom Field IDs
 $script:customFieldIncCrqSrq = "customfield_10000"
+
+# Default optional attendees for calendar invites
+$script:defaultOptionalAttendees = @(
+    @{
+        Name = "Team.DevOps"
+        Email = "team.devops@example.com"
+    },
+    @{
+        Name = "Team.IT.Support"
+        Email = "team.it.support@example.com"
+    },
+    @{
+        Name = "John Doe - Example"
+        Email = "john.doe@example.com"
+    }
+)
